@@ -1,0 +1,15 @@
+{
+    "name": "deadpool/test-task",
+    "authors": [
+        {
+            "name": "Alexey Kalaydov",
+            "email": "deadpool_7_8@yahoo.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "require": {}
+}

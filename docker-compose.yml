@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx/:/etc/nginx/conf.d/
+      - ./www:/var/www
+      - ./logs/nginx:/var/log/nginx
+    links:
+      - php
+    container_name: webserver
+    volumes_from:
+      - php
+
+  php:
+    build: ./images/php
+    links:
+      - mysql
+    volumes:
+      - ./www:/var/www
+    container_name: php_7_4
+  mysql:
+      image: mysql
+      ports:
+          - "3306:3306"
+      volumes:
+       - /etc/mysql:/etc/mysql
+       - ./logs/mysql:/var/log/mysql
+       - ./mysql:/var/lib/mysql
+       - ./mysql-files:/var/lib/mysql-files
+      environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_task_db
+      container_name: test_task_mysql
