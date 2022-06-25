@@ -19,11 +19,11 @@ services:
   php:
     build: ./images/php
     links:
-      - mysql
+      - db
     volumes:
       - ./www:/var/www
     container_name: php_7_4
-  mysql:
+  db:
       image: mysql
       ports:
           - "3306:3306"
@@ -34,5 +34,7 @@ services:
        - ./mysql-files:/var/lib/mysql-files
       environment:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test_task_db
+          MYSQL_USER: deadpool
+          MYSQL_PASSWORD: D4SqguWR
+          MYSQL_DATABASE: get_prise
       container_name: test_task_mysql
