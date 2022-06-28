@@ -1,3 +1,6 @@
+<?php
+use app\core\Application;
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,7 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-    <title><?= /*$this->title*/'title' ?></title>
+    <title><?= $this->title ?></title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -29,9 +32,8 @@
                 <a class="nav-link" href="/about">About</a>
             </li>
         </ul>
-        <?php use app\core\Application;
-
-        if (/*Application::isGuest()*/1): ?>
+        <?php
+        if (Application::isGuest()): ?>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
                     <a class="nav-link" href="/login">Login</a>
@@ -43,8 +45,8 @@
         <?php else: ?>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/profile">
-                        Profile
+                    <a class="nav-link" href="/game">
+                        Game
                     </a>
                 </li>
                 <li class="nav-item active">
@@ -58,11 +60,11 @@
 </nav>
 
 <div class="container">
-<!--    --><?php //if (Application::$app->session->getFlash('success')): ?>
-<!--        <div class="alert alert-success">-->
-<!--            <p>--><?php //echo Application::$app->session->getFlash('success') ?><!--</p>-->
-<!--        </div>-->
-<!--    --><?php //endif; ?>
+    <?php if (Application::$app->session->getFlash('success')): ?>
+        <div class="alert alert-success">
+            <p><?php echo Application::$app->session->getFlash('success') ?></p>
+        </div>
+    <?php endif; ?>
     {{content}}
 </div>
 

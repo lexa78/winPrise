@@ -16,4 +16,6 @@ class Rules
     public const MAX_LENGTH = 'max';
     /** @var string Должно совпадать с каким-то значением */
     public const MATCH = 'match';
+    /** @var string Должно быть уникальным */
+    public const UNIQUE = 'unique';
 }

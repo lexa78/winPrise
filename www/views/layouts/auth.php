@@ -11,11 +11,17 @@
 </head>
 <body>
 <div class="container">
-<!--    --><?php //if (Application::$app->session->getFlash('success')): ?>
-<!--        <div class="alert alert-success">-->
-<!--            <p>--><?php //echo Application::$app->session->getFlash('success') ?><!--</p>-->
-<!--        </div>-->
-<!--    --><?php //endif; ?>
+    <?php use app\core\Application;
+        if (Application::$app->session->getFlash('success')): ?>
+            <div class="alert alert-success">
+                <p><?php echo Application::$app->session->getFlash('success') ?></p>
+            </div>
+        <?php endif; ?>
+    <?php if (Application::$app->session->getFlash('error')): ?>
+        <div class="alert alert-danger">
+            <p><?php echo Application::$app->session->getFlash('error') ?></p>
+        </div>
+    <?php endif; ?>
     {{content}}
 </div>
 

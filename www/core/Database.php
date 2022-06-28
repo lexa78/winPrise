@@ -70,7 +70,7 @@ class Database
     public function getAppliedMigrations($orderWay = Migration::ORDER_WAY_ASC)
     {
         $statement = $this->pdo->prepare(
-            sprintf('SELECT migration FROM migrations ORDER BY created_at %s', $orderWay)
+            sprintf('SELECT migration FROM migrations ORDER BY migration %s', $orderWay)
         );
         $statement->execute();
 

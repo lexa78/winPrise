@@ -8,7 +8,7 @@ class m0002_test extends Migration
 {
     public function up()
     {
-        $this->db->pdo->exec('ALTER TABLE users ADD COLUMN password VARCHAR(25) NOT NULL');
+        $this->db->pdo->exec('ALTER TABLE users ADD COLUMN password VARCHAR(255) NOT NULL');
     }
 
     public function down()

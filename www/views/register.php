@@ -1,3 +1,6 @@
+<?php
+/** @var \app\models\User $model */
+?>
 <h1>Create an account</h1>
 <?php
 use app\core\form\Form;
