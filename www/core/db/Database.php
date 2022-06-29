@@ -1,16 +1,40 @@
 <?php
+declare(strict_types=1);
 
+namespace app\core\db;
 
-namespace app\core;
-
+use app\core\Application;
 use PDO;
 use app\constants\Migration;
 
+use function is_null;
+use function scandir;
+use function sprintf;
+use function array_diff;
+use function count;
+use function array_filter;
+use function strpos;
+use function implode;
+use function array_map;
+use function date;
+use function pathinfo;
+
+/**
+ * Class Database
+ * @package app\core\db
+ */
 class Database
 {
+    /** @var PDO  */
     public PDO $pdo;
+
+    /** @var array  */
     protected array $handledMigrationsName = [];
 
+    /**
+     * Database constructor.
+     * @param array $config
+     */
     public function __construct(array $config)
     {
         $dsn = $config['dsn'] ?? '';
@@ -20,7 +44,11 @@ class Database
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    public function applyMigrations(string $action, ?string $migrationNumber)
+    /**
+     * @param string $action
+     * @param string|null $migrationNumber
+     */
+    public function applyMigrations(string $action, ?string $migrationNumber): void
     {
         $this->createMigrationsTable();
         switch ($action) {
@@ -58,7 +86,10 @@ class Database
         }
     }
 
-    public function createMigrationsTable()
+    /**
+     * @return void
+     */
+    public function createMigrationsTable(): void
     {
         $this->pdo->exec('CREATE TABLE IF NOT EXISTS migrations (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,7 +98,11 @@ class Database
         ) ENGINE=INNODB;');
     }
 
-    public function getAppliedMigrations($orderWay = Migration::ORDER_WAY_ASC)
+    /**
+     * @param string $orderWay
+     * @return array
+     */
+    public function getAppliedMigrations(string $orderWay = Migration::ORDER_WAY_ASC): array
     {
         $statement = $this->pdo->prepare(
             sprintf('SELECT migration FROM migrations ORDER BY migration %s', $orderWay)
@@ -77,19 +112,28 @@ class Database
         return $statement->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    public function saveMigrations(array $migrationsName)
+    /**
+     * @param array $migrationsName
+     */
+    public function saveMigrations(array $migrationsName): void
     {
         $valuesStr = implode(',', array_map(fn($m) => sprintf("('%s')", $m), $migrationsName));
         $statement = $this->pdo->prepare(sprintf('INSERT INTO migrations (migration) VALUES %s', $valuesStr));
         $statement->execute();
     }
 
-    protected function log($message)
+    /**
+     * @param string $message
+     */
+    protected function log(string $message): void
     {
         echo sprintf('[%s] - %s%s', date('Y-m-d H:i:s'), $message, PHP_EOL);
     }
 
-    protected function migrationsUpAction(array $migrationsToUp)
+    /**
+     * @param array $migrationsToUp
+     */
+    protected function migrationsUpAction(array $migrationsToUp): void
     {
         foreach ($migrationsToUp as $migration) {
             if ($migration === '.' || $migration === '..') {
@@ -113,6 +157,10 @@ class Database
         }
     }
 
+    /**
+     * @param string $number
+     * @return array
+     */
     protected function getMigrationByNumber(string $number): array
     {
         $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
@@ -126,7 +174,10 @@ class Database
         return $statement->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    protected function migrationsDownAction(array $migrationsToDown)
+    /**
+     * @param array $migrationsToDown
+     */
+    protected function migrationsDownAction(array $migrationsToDown): void
     {
         foreach ($migrationsToDown as $migration) {
             require_once sprintf('%s/migrations/%s', Application::$ROOT_DIR, $migration);
@@ -146,7 +197,10 @@ class Database
         }
     }
 
-    public function removeMigrations(array $migrationsName)
+    /**
+     * @param array $migrationsName
+     */
+    public function removeMigrations(array $migrationsName): void
     {
         $migrationsName = array_map(fn($mn) => sprintf("'%s'", $mn), $migrationsName);
         $statement = $this->pdo->prepare(

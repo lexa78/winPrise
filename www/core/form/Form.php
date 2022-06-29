@@ -1,24 +1,42 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\core\form;
 
 use app\core\Model;
 
+use function sprintf;
+/**
+ * Class Form
+ * @package app\core\form
+ */
 class Form
 {
-    public static function begin($action, $method)
+    /**
+     * @param string $action
+     * @param string $method
+     * @return Form
+     */
+    public static function begin(string $action, string $method): Form
     {
         echo sprintf('<form action="%s" method="%s">', $action, $method);
         return new Form();
     }
 
-    public static function end()
+    /**
+     * @return string
+     */
+    public static function end(): string
     {
         return '<\form>';
     }
 
-    public function field(Model $model, $attribute)
+    /**
+     * @param Model $model
+     * @param string $attribute
+     * @return Field
+     */
+    public function field(Model $model, string $attribute): Field
     {
         return new Field($model, $attribute);
     }

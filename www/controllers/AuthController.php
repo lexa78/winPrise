@@ -1,8 +1,7 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\controllers;
-
 
 use app\constants\Template;
 use app\core\Application;
@@ -13,14 +12,27 @@ use app\core\Response;
 use app\models\LoginForm;
 use app\models\User;
 
+/**
+ * Class AuthController
+ * @package app\controllers
+ */
 class AuthController extends Controller
 {
+    /**
+     * AuthController constructor.
+     */
     public function __construct()
     {
         $this->registerMiddleware(new AuthMiddleware(['game']));
     }
 
-    public function login(Request $request, Response $response) {
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return string
+     */
+    public function login(Request $request, Response $response): string
+    {
         $loginForm = new LoginForm();
         if ($request->isPost()) {
             $loginForm->loadData($request->getBody());
@@ -36,7 +48,12 @@ class AuthController extends Controller
         ]);
     }
 
-    public function register(Request $request) {
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public function register(Request $request): string
+    {
         $user = new User();
 
         if ($request->isPost()) {
@@ -60,13 +77,20 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request, Response $response)
+    /**
+     * @param Request $request
+     * @param Response $response
+     */
+    public function logout(Request $request, Response $response): void
     {
         Application::$app->logout();
         $response->redirect('/');
     }
 
-    public function game()
+    /**
+     * @return string
+     */
+    public function game(): string
     {
         return $this->render('game', [
             'model' => new User(),

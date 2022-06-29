@@ -1,17 +1,36 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\core;
 
 use app\constants\Rules;
 
+use function property_exists;
+use function is_string;
+use function is_array;
+use function filter_var;
+use function strlen;
+use function sprintf;
+use function str_replace;
+
+/**
+ * Class Model
+ * @package app\core
+ */
 abstract class Model
 {
+    /**
+     * @return array
+     */
     abstract public function rules(): array;
 
+    /** @var array  */
     public array $errors = [];
 
-    public function loadData($requestBody)
+    /**
+     * @param array $requestBody
+     */
+    public function loadData(array $requestBody): void
     {
         foreach ($requestBody as $key => $value) {
             if (property_exists($this, $key)) {
@@ -20,7 +39,10 @@ abstract class Model
         }
     }
 
-    public function validate()
+    /**
+     * @return bool
+     */
+    public function validate(): bool
     {
         foreach ($this->rules() as $attribute => $rules) {
             $value = $this->{$attribute};
@@ -81,7 +103,12 @@ abstract class Model
         return empty($this->errors);
     }
 
-    public function addError(string $attribute, string $ruleName, array $params = [])
+    /**
+     * @param string $attribute
+     * @param string $ruleName
+     * @param array $params
+     */
+    public function addError(string $attribute, string $ruleName, array $params = []): void
     {
         $message = $this->errorMessages()[$ruleName] ?? '';
         foreach ($params as $key => $value) {
@@ -90,7 +117,10 @@ abstract class Model
         $this->errors[$attribute][] = $message;
     }
 
-    public function errorMessages()
+    /**
+     * @return array
+     */
+    public function errorMessages(): array
     {
         return [
             Rules::REQUIRED => 'This field is required',
@@ -102,22 +132,37 @@ abstract class Model
         ];
     }
 
-    public function hasError($attribute)
+    /**
+     * @param string $attribute
+     * @return bool
+     */
+    public function hasError(string $attribute): bool
     {
-        return $this->errors[$attribute] ?? false;
+        return !empty($this->errors[$attribute]);
     }
 
-    public function getFirstError($attribute)
+    /**
+     * @param string $attribute
+     * @return string
+     */
+    public function getFirstError($attribute): string
     {
-        return $this->errors[$attribute][0] ?? false;
+        return $this->errors[$attribute][0] ?? '';
     }
 
+    /**
+     * @return array
+     */
     public function labels(): array
     {
         return [];
     }
 
-    public function getLabel($attribute)
+    /**
+     * @param string $attribute
+     * @return string
+     */
+    public function getLabel(string $attribute): string
     {
         return $this->labels()[$attribute] ?? $attribute;
     }

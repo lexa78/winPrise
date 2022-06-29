@@ -1,7 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace app\constants;
 
+/**
+ * Class Template
+ * @package app\constants
+ */
 class Template
 {
     /** Названия шаблонов для рендеринга */

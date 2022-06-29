@@ -1,17 +1,30 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\core;
 
+use function header;
+use function http_response_code;
+use function sprintf;
 
+/**
+ * Class Response
+ * @package app\core
+ */
 class Response
 {
-    public function setStatusCode(int $code)
+    /**
+     * @param int $code
+     */
+    public function setStatusCode(int $code): void
     {
         http_response_code($code);
     }
 
-    public function redirect(string $url)
+    /**
+     * @param string $url
+     */
+    public function redirect(string $url): void
     {
         header(sprintf('Location: %s', $url));
     }

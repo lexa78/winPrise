@@ -1,13 +1,25 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\core;
 
 use app\constants\Request as RequestConstant;
 
+use function stripos;
+use function substr;
+use function strtolower;
+use function filter_input;
+
+/**
+ * Class Request
+ * @package app\core
+ */
 class Request
 {
-    public function getPath()
+    /**
+     * @return string
+     */
+    public function getPath(): string
     {
         $path = $_SERVER['REQUEST_URI'] ?? '/';
         $position = stripos($path, '?');
@@ -18,22 +30,34 @@ class Request
         return substr($path, 0, $position);
     }
 
-    public function method()
+    /**
+     * @return string
+     */
+    public function method(): string
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
-    public function isGet()
+    /**
+     * @return bool
+     */
+    public function isGet(): bool
     {
         return $this->method() === RequestConstant::METHOD_GET;
     }
 
-    public function isPost()
+    /**
+     * @return bool
+     */
+    public function isPost(): bool
     {
         return $this->method() === RequestConstant::METHOD_POST;
     }
 
-    public function getBody()
+    /**
+     * @return array
+     */
+    public function getBody(): array
     {
         $body = [];
         switch ($this->method()) {

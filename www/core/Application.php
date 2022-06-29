@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace app\core;
 
+use app\core\db\Database;
 use app\models\User;
 use Exception;
 
@@ -11,7 +13,9 @@ use Exception;
  */
 class Application
 {
+    /** @var string  */
     public static string $ROOT_DIR;
+
     /** @var Router  */
     public  Router $router;
 
@@ -21,26 +25,36 @@ class Application
     /** @var Response  */
     public Response $response;
 
+    /** @var Application  */
     public static Application $app;
 
+    /** @var Controller|null  */
     public ?Controller $controller = null;
 
+    /** @var Database  */
     public Database $db;
 
+    /** @var Session  */
     public Session $session;
 
-    public ?DbModel $user;
+    /** @var db\DbModel|UserModel|null  */
+    public ?UserModel $user;
 
+    /** @var User|null  */
     public ?User $userClass;
 
+    /** @var string  */
     public string $layout = 'main';
 
+    /** @var View  */
     public View $view;
 
     /**
      * Application constructor.
+     * @param string $rootPath
+     * @param array $config
      */
-    public function __construct($rootPath, array $config)
+    public function __construct(string $rootPath, array $config)
     {
         self::$ROOT_DIR = $rootPath;
         self::$app = $this;
@@ -62,7 +76,10 @@ class Application
         $this->view = new View();
     }
 
-    public function run()
+    /**
+     * @return void
+     */
+    public function run(): void
     {
         try {
             echo $this->router->resolve();
@@ -90,7 +107,11 @@ class Application
         $this->controller = $controller;
     }
 
-    public function login(DbModel $user)
+    /**
+     * @param UserModel $user
+     * @return bool
+     */
+    public function login(UserModel $user): bool
     {
         $this->user = $user;
         $primaryKey = $user->primaryKey();
@@ -100,16 +121,20 @@ class Application
         return true;
     }
 
-    public function logout()
+    /**
+     * @return void
+     */
+    public function logout(): void
     {
         $this->user = null;
         $this->session->remove('user');
     }
 
-    public static function isGuest()
+    /**
+     * @return bool
+     */
+    public static function isGuest(): bool
     {
         return !self::$app->user;
     }
-
-
 }

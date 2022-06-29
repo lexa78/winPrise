@@ -1,17 +1,40 @@
 <?php
+declare(strict_types=1);
 
+namespace app\core\db;
 
-namespace app\core;
+use app\core\Application;
+use app\core\Model;
 
+use function array_map;
+use function sprintf;
+use function implode;
+
+/**
+ * Class DbModel
+ * @package app\core\db
+ */
 abstract class DbModel extends Model
 {
+    /**
+     * @return string
+     */
     abstract public function tableName(): string;
 
+    /**
+     * @return array
+     */
     abstract public function attributes(): array;
 
+    /**
+     * @return string
+     */
     abstract public function primaryKey(): string;
 
-    public function save()
+    /**
+     * @return bool
+     */
+    public function save(): bool
     {
         $tableName = $this->tableName();
         $attributes = $this->attributes();
@@ -34,7 +57,11 @@ abstract class DbModel extends Model
         return true;
     }
 
-    public function findOne($conditions)
+    /**
+     * @param array $conditions
+     * @return DbModel|null
+     */
+    public function findOne(array $conditions): ?DbModel
     {
         $tableName = $this->tableName();
         $attributes = array_keys($conditions);
@@ -48,7 +75,11 @@ abstract class DbModel extends Model
         return $statement->fetchObject(static::class);
     }
 
-    public static function prepare($sql)
+    /**
+     * @param string $sql
+     * @return bool|\PDOStatement
+     */
+    public static function prepare(string $sql)
     {
         return Application::$app->db->pdo->prepare($sql);
     }

@@ -1,10 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace app\core;
 
 use app\constants\Request as RequestConstant;
 use app\core\exception\NotFoundException;
-use Exception;
+
+use function is_string;
+use function is_array;
+use function call_user_func;
 
 /**
  * Class Router
@@ -32,16 +36,28 @@ class Router
         $this->response = $response;
     }
 
-    public function get($path, $callback)
+    /**
+     * @param string $path
+     * @param mixed $callback
+     */
+    public function get(string $path, $callback): void
     {
         $this->routes[RequestConstant::METHOD_GET][$path] = $callback;
     }
 
-    public function post($path, $callback)
+    /**
+     * @param string $path
+     * @param mixed $callback
+     */
+    public function post(string $path, $callback): void
     {
         $this->routes[RequestConstant::METHOD_POST][$path] = $callback;
     }
 
+    /**
+     * @return mixed|string|string[]
+     * @throws NotFoundException
+     */
     public function resolve()
     {
         $path = $this->request->getPath();

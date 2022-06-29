@@ -1,8 +1,12 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\constants;
 
+/**
+ * Class UserStatus
+ * @package app\constants
+ */
 class UserStatus
 {
     /** Статусы регистрации пользователя */

@@ -1,9 +1,12 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\constants;
 
-
+/**
+ * Class Request
+ * @package app\constants
+ */
 class Request
 {
     /** Методы запроса */

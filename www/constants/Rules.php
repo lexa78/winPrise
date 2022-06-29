@@ -1,8 +1,12 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\constants;
 
+/**
+ * Class Rules
+ * @package app\constants
+ */
 class Rules
 {
     /** Правила валидации */

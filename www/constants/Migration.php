@@ -1,8 +1,12 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\constants;
 
+/**
+ * Class Migration
+ * @package app\constants
+ */
 class Migration
 {
     /** Названия коротких и длинных параметров, передаваемых в скрипт migrations.php */

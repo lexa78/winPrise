@@ -1,15 +1,25 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\core\form;
 
 use app\core\Model;
 use app\constants\Field as FieldConstant;
 
+use function sprintf;
+/**
+ * Class Field
+ * @package app\core\form
+ */
 class Field
 {
+    /** @var string  */
     public string $type;
+
+    /** @var Model  */
     public Model $model;
+
+    /** @var string  */
     public string $attribute;
 
     /**
@@ -24,7 +34,10 @@ class Field
         $this->attribute = $attribute;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
         return sprintf('
             <div class="form-group">
@@ -43,7 +56,10 @@ class Field
         );
     }
 
-    public function passwordField()
+    /**
+     * @return $this
+     */
+    public function passwordField(): Field
     {
         $this->type = FieldConstant::TYPE_PASSWORD;
         return $this;

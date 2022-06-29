@@ -1,31 +1,25 @@
 <?php
+declare(strict_types=1);
 
 namespace app\controllers;
 
-use app\core\Application;
 use app\core\Controller;
-use app\core\Request;
 
+/**
+ * Class SiteController
+ * @package app\controllers
+ */
 class SiteController extends Controller
 {
-    public function home()
+    /**
+     * @return string
+     */
+    public function home(): string
     {
         $params = [
             'name' => 'Praga',
         ];
 
         return $this->render('home', $params);
-    }
-
-    public function handleContact(Request $request)
-    {
-        $body = $request->getBody();
-
-        return 'Handling submitted data';
-    }
-
-    public function contact()
-    {
-        return $this->render('contact');
     }
 }

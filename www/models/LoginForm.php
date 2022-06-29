@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace app\models;
 
@@ -7,11 +7,23 @@ use app\constants\Rules;
 use app\core\Application;
 use app\core\Model;
 
+use function password_verify;
+
+/**
+ * Class LoginForm
+ * @package app\models
+ */
 class LoginForm extends Model
 {
+    /** @var string  */
     public string $email = '';
+
+    /** @var string  */
     public string $password = '';
 
+    /**
+     * @return array|array[]
+     */
     public function rules(): array
     {
         return [
@@ -20,7 +32,10 @@ class LoginForm extends Model
         ];
     }
 
-    public function login()
+    /**
+     * @return bool
+     */
+    public function login(): bool
     {
         /** @var User $user */
         $user = (new User())->findOne([
@@ -35,6 +50,9 @@ class LoginForm extends Model
         return Application::$app->login($user);
     }
 
+    /**
+     * @return array|string[]
+     */
     public function labels(): array
     {
         return [
