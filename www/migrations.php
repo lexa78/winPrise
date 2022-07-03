@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use app\core\Application;
+use app\models\User;
 use Dotenv\Dotenv;
 use app\constants\Migration;
 
@@ -10,6 +11,7 @@ $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 $config = [
+    'userClass' => User::class,
     'db' => [
         'dsn' => $_ENV['DB_DSN'],
         'user' => $_ENV['DB_USER'],

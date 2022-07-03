@@ -38,3 +38,5 @@ services:
           MYSQL_PASSWORD: D4SqguWR
           MYSQL_DATABASE: get_prise
       container_name: test_task_mysql
+      cap_add:
+        - SYS_NICE
