@@ -18,6 +18,7 @@ use function implode;
 use function array_map;
 use function date;
 use function pathinfo;
+use function is_array;
 
 /**
  * Class Database
@@ -187,6 +188,7 @@ class Database
             $this->log(sprintf('Downing migration %s', $migration));
             $instance->down();
             $this->log('Successfully!');
+
             $this->handledMigrationsName[] = $migration;
         }
 
@@ -202,10 +204,22 @@ class Database
      */
     public function removeMigrations(array $migrationsName): void
     {
-        $migrationsName = array_map(fn($mn) => sprintf("'%s'", $mn), $migrationsName);
         $statement = $this->pdo->prepare(
-            sprintf('DELETE FROM migrations WHERE migration IN (%s)', implode(',', $migrationsName))
+    'SELECT * FROM information_schema.tables 
+            WHERE table_schema = :get_prise 
+            AND table_name = :migrations LIMIT 1;'
         );
+        $statement->bindValue(':get_prise', 'get_prise');
+        $statement->bindValue(':migrations', 'migrations');
         $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if (is_array($result) && count($result) > 0) {
+            $migrationsName = array_map(fn($mn) => sprintf("'%s'", $mn), $migrationsName);
+            $statement = $this->pdo->prepare(
+                sprintf('DELETE FROM migrations WHERE migration IN (%s)', implode(',', $migrationsName))
+            );
+            $statement->execute();
+        }
     }
 }

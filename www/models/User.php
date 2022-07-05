@@ -4,10 +4,15 @@ declare(strict_types=1);
 namespace app\models;
 
 use app\constants\Rules;
-use app\constants\UserStatus;
+use app\constants\UserRole;
+use app\core\Application;
+use app\core\exception\RuntimeException;
 use app\core\UserModel;
+use Exception;
+use PDO;
 
 use function password_hash;
+use function sprintf;
 /**
  * Class User
  * @package app\models
@@ -29,8 +34,8 @@ class User extends UserModel
     /** @var string  */
     public string $passwordConfirm = '';
 
-    /** @var int  */
-    public int $status = UserStatus::INACTIVE;
+    /** @var string  */
+    public string $role;// = UserRole::NORMAL_USER;
 
     /**
      * @return string
@@ -41,13 +46,23 @@ class User extends UserModel
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function save(): bool
+    public function save(): string
     {
-        $this->status = UserStatus::INACTIVE;
-        $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-        return parent::save();
+        Application::$app->db->pdo->beginTransaction();
+        try {
+            $this->role = UserRole::NORMAL_USER;
+            $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+            $this->{$this->primaryKey()} = parent::save();
+            $this->setRole($this->role);
+        } catch (Exception $e) {
+            Application::$app->db->pdo->rollBack();
+        }
+        Application::$app->db->pdo->commit();
+        Application::$app->login($this);
+
+        return $this->{$this->primaryKey()};
     }
 
     /**
@@ -77,7 +92,6 @@ class User extends UserModel
             'lastName',
             'email',
             'password',
-            'status',
         ];
     }
 
@@ -109,5 +123,36 @@ class User extends UserModel
     public function getDisplayName(): string
     {
         return sprintf('%s %s', $this->firstName, $this->lastName);
+    }
+
+    /**
+     * @param string $roleName
+     * @throws RuntimeException
+     */
+    private function setRole(string $roleName): void
+    {
+        $statement = self::prepare('INSERT INTO role_user (role_id, user_id) VALUES (:role, :user);');
+        /** @var Role $role */
+        $role = (new Role())->findOne(['code' => $this->role]);
+        if (!($role instanceof Role)) {
+            throw new RuntimeException(sprintf('Role with code %s not found', $this->role));
+        }
+        $statement->bindValue(':role', $role->{$role->primaryKey()});
+        $statement->bindValue(':user', $this->{$this->primaryKey()});
+
+        $statement->execute();
+    }
+
+    /**
+     * @param $userId
+     * @return array|false
+     */
+    public function findOutRoleId($userId)
+    {
+        $statement = self::prepare('SELECT role_id FROM role_user WHERE user_id = :userId LIMIT 1;');
+        $statement->bindValue(':userId', $userId);
+        $statement->execute();
+
+        return $statement->fetch(PDO::FETCH_ASSOC);
     }
 }

@@ -8,6 +8,7 @@ use app\core\Migration;
 use PDO;
 use function password_hash;
 use function sprintf;
+
 /**
  * Class m0001_initial
  * @package app\migrations
@@ -37,102 +38,107 @@ class m0001_initial extends Migration
      */
     public function up(): void
     {
-        $query = 'CREATE TABLE users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+        $query = 'CREATE TABLE roles (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            code VARCHAR(50) NOT NULL,
+            name VARCHAR(100) NOT NULL
+        ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'User`s roles\';';
+        $query .= ' CREATE TABLE users (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             email VARCHAR(255) NOT NULL,
             firstName VARCHAR(255) NOT NULL,
             lastName VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'All users of this app\';';
-        $query .= ' CREATE TABLE roles (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            code VARCHAR(50) NOT NULL,
-            name VARCHAR(100) NOT NULL
-        ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'User`s roles\';';
         $query .= ' CREATE TABLE role_user (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            role_id INT NOT NULL,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            user_id INT UNSIGNED NOT NULL,
+            role_id INT UNSIGNED NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (role_id) REFERENCES roles(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Pivot table to users and their roles\';';
         $query .= ' CREATE TABLE events (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(50) NOT NULL,
             name VARCHAR(100) NOT NULL
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'List of events that can happen\';';
         $query .= ' CREATE TABLE prises_type (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(50) NOT NULL,
             name VARCHAR(100) NOT NULL,
             is_limited BOOL NOT NULL DEFAULT 0
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'List of prises type\';';
         $query .= ' CREATE TABLE units (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(50) NOT NULL,
             name VARCHAR(100) NOT NULL
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Unit of measure\';';
         $query .= ' CREATE TABLE things (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(50) NOT NULL,
             name VARCHAR(100) NOT NULL,
-            prise_id INT NOT NULL,
-            unit_id INT NOT NULL,
+            prise_id INT UNSIGNED NOT NULL,
+            unit_id INT UNSIGNED NOT NULL,
             FOREIGN KEY (prise_id) REFERENCES prises_type(id),
             FOREIGN KEY (unit_id) REFERENCES units(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'List of things that will be as prise\';';
         $query .= ' CREATE TABLE actions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            event_id INT NOT NULL,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            event_id INT UNSIGNED NOT NULL,
             action_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            thing_id INT NOT NULL,
-            user_id INT NOT NULL,
+            thing_id INT UNSIGNED NOT NULL,
+            user_id INT UNSIGNED NOT NULL,
             FOREIGN KEY (event_id) REFERENCES events(id),
             FOREIGN KEY (thing_id) REFERENCES things(id),
             FOREIGN KEY (user_id) REFERENCES users(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Actions that was with prises\';';
         $query .= ' CREATE TABLE storage (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            action_id INT NOT NULL,
-            thing_id INT NOT NULL,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            action_id INT UNSIGNED NOT NULL,
+            thing_id INT UNSIGNED NOT NULL,
             item_count INT NOT NULL DEFAULT 0,
             FOREIGN KEY (action_id) REFERENCES actions(id),
             FOREIGN KEY (thing_id) REFERENCES things(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Balance of all prizes except not limited\';';
         $query .= ' CREATE TABLE users_prise (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            count_in_total INT NOT NULL DEFAULT 0,
-            action_id INT NOT NULL,
-            thing_id INT NOT NULL,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            user_id INT UNSIGNED NOT NULL,
+            count_in_total INT UNSIGNED NOT NULL DEFAULT 0,
+            action_id INT UNSIGNED NOT NULL,
+            thing_id INT UNSIGNED NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (action_id) REFERENCES actions(id),
             FOREIGN KEY (thing_id) REFERENCES things(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'All user`s won prises mainly for count user`s bonus points\';';
         $query .= ' CREATE TABLE change_courses (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             course FLOAT(7, 2) NOT NULL,
-            thing_id INT NOT NULL,
+            thing_id INT UNSIGNED NOT NULL,
             FOREIGN KEY (thing_id) REFERENCES things(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Courses of change money for bonus points\';';
         $query .= ' CREATE TABLE limits (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            thing_id INT NOT NULL,
-            min_value INT NOT NULL,
-            max_value INT NOT NULL,
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            thing_id INT UNSIGNED NOT NULL,
+            min_value INT UNSIGNED NOT NULL,
+            max_value INT UNSIGNED NOT NULL,
             FOREIGN KEY (thing_id) REFERENCES things(id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Limits for money to win\';';
 
         $this->db->pdo->exec($query);
 
-        $query = sprintf(' INSERT INTO users (email, firstName, lastName, password)
-            VALUES (\'admin@gmail.com\', \'admin\', \'admin\', \'%s\');', password_hash('admin', PASSWORD_DEFAULT));
-
-        $this->db->pdo->exec($query);
-
         $query = ' INSERT INTO roles (code, name)
             VALUES (\'admin\', \'Администратор\'), (\'user\', \'Пользователь\');';
+        $this->db->pdo->exec($query);
+
+        $query = sprintf(' INSERT INTO users (email, firstName, lastName, password)
+            VALUES (
+            \'admin@gmail.com\', 
+            \'admin\', 
+            \'admin\', 
+            \'%s\');',
+            password_hash('admin', PASSWORD_DEFAULT),
+        );
         $this->db->pdo->exec($query);
 
         $query = sprintf(' INSERT INTO role_user (user_id, role_id)
@@ -144,6 +150,7 @@ class m0001_initial extends Migration
 
         $query = ' INSERT INTO events (code, name)
             VALUES (\'coming\', \'Поступление\'),
+            (\'change\', \'Обмен денег на баллы\'),
             (\'expenditure\', \'Расход\'),
             (\'frozen\', \'Резерв\'),
             (\'huylo\', \'"Спецоперация"\');';

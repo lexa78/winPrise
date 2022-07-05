@@ -14,4 +14,6 @@ class Template
     public const NAME_MAIN = 'main';
     /** @var string auth */
     public const NAME_AUTH = 'auth';
+    /** @var string admin */
+    public const NAME_ADMIN = 'admin';
 }

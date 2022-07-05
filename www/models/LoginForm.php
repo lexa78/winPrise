@@ -5,9 +5,11 @@ namespace app\models;
 
 use app\constants\Rules;
 use app\core\Application;
+use app\core\exception\RuntimeException;
 use app\core\Model;
 
 use function password_verify;
+use function sprintf;
 
 /**
  * Class LoginForm
@@ -46,6 +48,18 @@ class LoginForm extends Model
             Application::$app->session->setFlash('error', 'Email or password is wrong!');
             return false;
         }
+
+        $result = $user->findOutRoleId($user->{$user->primaryKey()});
+        if (empty($result['role_id'])) {
+            throw new RuntimeException(sprintf('Role for user with email %s was not found', $user->email));
+        }
+        /** @var Role $role */
+        $role = (new Role())->findOne(['id' => $result['role_id']]);
+        if (!($role instanceof Role)) {
+            throw new RuntimeException(sprintf('Role code for role id %s was not found'), $result['role_id']);
+        }
+
+        $user->role = $role->code;
 
         return Application::$app->login($user);
     }

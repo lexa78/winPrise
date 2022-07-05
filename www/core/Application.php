@@ -4,9 +4,12 @@ declare(strict_types=1);
 namespace app\core;
 
 use app\core\db\Database;
+use app\core\exception\RuntimeException;
+use app\models\Role;
 use app\models\User;
 use Exception;
 
+use function is_null;
 /**
  * Class Application
  * @package app\core
@@ -68,7 +71,26 @@ class Application
         $primaryValue = $this->session->get('user');
         if ($primaryValue) {
             $primaryKey = $this->userClass->primaryKey();
-            $this->user = $this->userClass->findOne([$primaryKey => $primaryValue]);
+            $user = $this->userClass->findOne([$primaryKey => $primaryValue]);
+            $this->user = $user instanceof User ? $user : null;
+
+            if (!is_null($this->user)) {
+                $result = $user->findOutRoleId($this->user->{$this->user->primaryKey()});
+                if (empty($result['role_id'])) {
+                    throw new RuntimeException(
+                        printf('Role for user with email %s was not found', $this->user->email)
+                    );
+                }
+                /** @var Role $role */
+                $role = (new Role())->findOne(['id' => $result['role_id']]);
+                if (!($role instanceof Role)) {
+                    throw new RuntimeException(
+                        sprintf('Role code for role id %s was not found'), $result['role_id']
+                    );
+                }
+
+                $this->user->role = $role->code;
+            }
         } else {
             $this->user = null;
         }
@@ -114,9 +136,7 @@ class Application
     public function login(UserModel $user): bool
     {
         $this->user = $user;
-        $primaryKey = $user->primaryKey();
-        $primaryValue = $user->{$primaryKey};
-        $this->session->set('user', $primaryValue);
+        $this->session->set('user', $user->{$user->primaryKey()});
 
         return true;
     }
@@ -128,13 +148,5 @@ class Application
     {
         $this->user = null;
         $this->session->remove('user');
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isGuest(): bool
-    {
-        return !self::$app->user;
     }
 }

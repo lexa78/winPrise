@@ -32,9 +32,9 @@ abstract class DbModel extends Model
     abstract public function primaryKey(): string;
 
     /**
-     * @return bool
+     * @return string
      */
-    public function save(): bool
+    public function save(): string
     {
         $tableName = $this->tableName();
         $attributes = $this->attributes();
@@ -53,15 +53,14 @@ abstract class DbModel extends Model
         }
 
         $statement->execute();
-
-        return true;
+        return Application::$app->db->pdo->lastInsertId();
     }
 
     /**
      * @param array $conditions
-     * @return DbModel|null
+     * @return DbModel|false
      */
-    public function findOne(array $conditions): ?DbModel
+    public function findOne(array $conditions)
     {
         $tableName = $this->tableName();
         $attributes = array_keys($conditions);

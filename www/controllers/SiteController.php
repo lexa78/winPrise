@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
+use app\core\Application;
 use app\core\Controller;
+use app\models\User;
 
 /**
  * Class SiteController
@@ -16,8 +18,12 @@ class SiteController extends Controller
      */
     public function home(): string
     {
+        $name = null;
+        if (Application::$app->user instanceof User) {
+            $name = Application::$app->user->firstName;
+        }
         $params = [
-            'name' => 'Praga',
+            'name' => $name,
         ];
 
         return $this->render('home', $params);

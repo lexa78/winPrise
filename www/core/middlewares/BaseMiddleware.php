@@ -9,6 +9,18 @@ namespace app\core\middlewares;
  */
 abstract class BaseMiddleware
 {
+    /** @var array  */
+    public array $actions = [];
+
+    /**
+     * AuthMiddleware constructor.
+     * @param array $actions
+     */
+    public function __construct(array $actions = [])
+    {
+        $this->actions = $actions;
+    }
+
     /**
      * @return void
      */
