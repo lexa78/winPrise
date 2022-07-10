@@ -62,15 +62,37 @@ class Request
         $body = [];
         switch ($this->method()) {
             case RequestConstant::METHOD_GET:
-                foreach ($_GET as $key => $value) {
-                    $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-                }
+                $body = $this->getGetBody();
                 break;
             case RequestConstant::METHOD_POST:
-                foreach ($_POST as $key => $value) {
-                    $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-                }
+                $body = $this->getPostBody();
                 break;
+        }
+
+        return $body;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGetBody(): array
+    {
+        $body = [];
+        foreach ($_GET as $key => $value) {
+            $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+        }
+
+        return $body;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPostBody(): array
+    {
+        $body = [];
+        foreach ($_POST as $key => $value) {
+            $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
         }
 
         return $body;

@@ -49,7 +49,8 @@ class m0001_initial extends Migration
             firstName VARCHAR(255) NOT NULL,
             lastName VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_email (email)  
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'All users of this app\';';
         $query .= ' CREATE TABLE role_user (
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -115,20 +116,22 @@ class m0001_initial extends Migration
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             course FLOAT(7, 2) NOT NULL,
             thing_id INT UNSIGNED NOT NULL,
-            FOREIGN KEY (thing_id) REFERENCES things(id)
+            FOREIGN KEY (thing_id) REFERENCES things(id),
+            UNIQUE KEY unique_course_thing (thing_id)  
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Courses of change money for bonus points\';';
         $query .= ' CREATE TABLE limits (
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             thing_id INT UNSIGNED NOT NULL,
             min_value INT UNSIGNED NOT NULL,
             max_value INT UNSIGNED NOT NULL,
-            FOREIGN KEY (thing_id) REFERENCES things(id)
+            FOREIGN KEY (thing_id) REFERENCES things(id),
+            UNIQUE KEY unique_limit_thing (thing_id)
         ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=\'Limits for money to win\';';
 
         $this->db->pdo->exec($query);
 
         $query = ' INSERT INTO roles (code, name)
-            VALUES (\'admin\', \'Администратор\'), (\'user\', \'Пользователь\');';
+            VALUES (\'admin\', \'Администратор\'), (\'user\', \'Пользователь\'), (\'postman\', \'Отправитель призов\');';
         $this->db->pdo->exec($query);
 
         $query = sprintf(' INSERT INTO users (email, firstName, lastName, password)
@@ -183,7 +186,7 @@ class m0001_initial extends Migration
             (\'usd_money\', \'Доллары США\', %s, %s),
             (\'eur_money\', \'Валюта Европейского Союза\', %s, %s),
             (\'jpy_money\', \'Валюта Японии\', %s, %s),
-            (\'rub_paper\', \'Валюта бензоколонки\', %s, %s),
+            (\'rub_paper\', \'Валюта рабсии\', %s, %s),
             (\'cereal\', \'Зерно\', %s, %s),
             (\'washing_machine\', \'Стиральная машина\', %s, %s),
             (\'toilet\', \'Унитаз\', %s, %s);',

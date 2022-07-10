@@ -29,7 +29,7 @@ class AdminController extends Controller
     {
         $this->setLayout(Template::NAME_ADMIN);
 
-        return $this->render('admin', [
+        return $this->render('admin/index', [
             'model' => Application::$app->user,
         ]);
     }

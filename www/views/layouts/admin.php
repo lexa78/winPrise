@@ -1,6 +1,5 @@
 <?php
 use app\core\Application;
-use app\models\User;
 ?>
 <!doctype html>
 <html lang="en">
@@ -20,13 +19,22 @@ use app\models\User;
             <a class="nav-link active" href="/admin">Get Prise Admin</a>
         </li>
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+               role="button" aria-haspopup="true" aria-expanded="false">Справочники</a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Separated link</a>
+                <a class="dropdown-item" href="/admin/roles">Роли</a>
+                <a class="dropdown-item" href="/admin/events">События</a>
+                <a class="dropdown-item" href="/admin/prise-types">Типы призов</a>
+                <a class="dropdown-item" href="/admin/units">Единицы измерения</a>
+                <a class="dropdown-item" href="/admin/things">Лимитные призы</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+               role="button" aria-haspopup="true" aria-expanded="false">Настройки</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/admin/courses">Курс обмена денег на баллы</a>
+                <a class="dropdown-item" href="/admin/limits">Ограничения для денежных призов</a>
             </div>
         </li>
         <li class="nav-item">
@@ -63,5 +71,10 @@ use app\models\User;
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+<script>
+    $('a.delete').click(function () {
+        return confirm('Are you sure you want to delete this row?');
+    });
+</script>
 </body>
 </html>

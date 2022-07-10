@@ -7,10 +7,10 @@ use app\constants\Rules;
 use app\core\db\DbModel;
 
 /**
- * Class Role
+ * Class Event
  * @package app\models
  */
-class Role extends DbModel
+class Event extends DbModel
 {
     /** @var array|string[]  */
     protected array $attributes = [
@@ -29,7 +29,7 @@ class Role extends DbModel
      */
     public function tableName(): string
     {
-        return 'roles';
+        return 'events';
     }
 
     /**
@@ -49,8 +49,8 @@ class Role extends DbModel
     public function labels(): array
     {
         return [
-            'code' => 'Код роли',
-            'name' => 'Название роли',
+            'code' => 'Код события',
+            'name' => 'Название события',
         ];
     }
 

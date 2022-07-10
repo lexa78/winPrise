@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\core;
 
 use app\constants\Rules;
+use app\constants\Controller as ControllerConstant;
 
 use function property_exists;
 use function is_string;
@@ -82,18 +83,30 @@ abstract class Model
                         }
                         break;
                     case Rules::UNIQUE:
-                        $className = $rule['class'];
-                        $uniqueAttribute = $rule['attribute'] ?? $attribute;
-                        $tableName = $className::tableName();
-                        $model = new $className();
-                        $statement = $model->prepare(
-                            sprintf('SELECT * FROM %s WHERE %s = :attr', $tableName, $uniqueAttribute)
-                        );
-                        $statement->bindValue(':attr', $value);
-                        $statement->execute();
-                        $record = $statement->fetchObject();
-                        if ($record) {
-                            $this->addError($attribute, $ruleName, ['field' => $this->getLabel($attribute)]);
+                        if (Application::$app->controller->action !== ControllerConstant::EDIT_ACTION) {
+                            $className = $rule['class'];
+                            $uniqueAttribute = $rule['attribute'] ?? $attribute;
+                            $tableName = $className::tableName();
+                            $model = new $className();
+                            $statement = $model->prepare(
+                                sprintf('SELECT * FROM %s WHERE %s = :attr', $tableName, $uniqueAttribute)
+                            );
+                            $statement->bindValue(':attr', $value);
+                            $statement->execute();
+                            $record = $statement->fetchObject();
+                            if ($record) {
+                                $this->addError($attribute, $ruleName, ['field' => $this->getLabel($attribute)]);
+                            }
+                        }
+                        break;
+                    case Rules::MIN_VALUE:
+                        if ((float) $value < $rule[Rules::MIN_VALUE]) {
+                            $this->addError($attribute, $ruleName, $rule);
+                        }
+                        break;
+                    case Rules::MAX_VALUE:
+                        if ((float) $value > $rule[Rules::MAX_VALUE]) {
+                            $this->addError($attribute, $ruleName, $rule);
                         }
                         break;
                 }
@@ -129,6 +142,8 @@ abstract class Model
             Rules::MAX_LENGTH => sprintf('Max length of this field must be {%s}', Rules::MAX_LENGTH),
             Rules::MATCH => sprintf('This field must be the same as {%s}', Rules::MATCH),
             Rules::UNIQUE => 'Record with this {field} already exists',
+            Rules::MIN_VALUE => sprintf('Min value of this field must be {%s}', Rules::MIN_VALUE),
+            Rules::MAX_VALUE => sprintf('Max value of this field must be {%s}', Rules::MAX_VALUE),
         ];
     }
 

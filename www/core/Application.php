@@ -10,6 +10,7 @@ use app\models\User;
 use Exception;
 
 use function is_null;
+use function is_int;
 /**
  * Class Application
  * @package app\core
@@ -106,7 +107,11 @@ class Application
         try {
             echo $this->router->resolve();
         } catch (Exception $e) {
-            $this->response->setStatusCode($e->getCode());
+            if (is_int($e->getCode())) {
+                $this->response->setStatusCode($e->getCode());
+            } else {
+                $this->response->setStatusCode(500);
+            }
             echo $this->view->renderView('_error', [
                 'exception' => $e
             ]);

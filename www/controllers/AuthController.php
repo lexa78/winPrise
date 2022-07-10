@@ -30,6 +30,7 @@ class AuthController extends Controller
      * @param Request $request
      * @param Response $response
      * @return string
+     * @throws \app\core\exception\RuntimeException
      */
     public function login(Request $request, Response $response): string
     {

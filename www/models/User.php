@@ -19,6 +19,14 @@ use function sprintf;
  */
 class User extends UserModel
 {
+    /** @var array|string[]  */
+    protected array $attributes = [
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+    ];
+
     /** @var string  */
     public string $firstName = '';
 
@@ -79,19 +87,6 @@ class User extends UserModel
             ]],
             'password' => [Rules::REQUIRED, [Rules::MIN_LENGTH, Rules::MIN_LENGTH => 8], [Rules::MAX_LENGTH, Rules::MAX_LENGTH => 24]],
             'passwordConfirm' => [Rules::REQUIRED, [Rules::MATCH, Rules::MATCH => 'password']],
-        ];
-    }
-
-    /**
-     * @return array|string[]
-     */
-    public function attributes(): array
-    {
-        return [
-            'firstName',
-            'lastName',
-            'email',
-            'password',
         ];
     }
 

@@ -7,29 +7,29 @@ use app\constants\Rules;
 use app\core\db\DbModel;
 
 /**
- * Class Role
+ * Class ChangeCourse
  * @package app\models
  */
-class Role extends DbModel
+class ChangeCourse extends DbModel
 {
     /** @var array|string[]  */
     protected array $attributes = [
-        'code',
-        'name',
+        'thing_id',
+        'course',
     ];
 
     /** @var string  */
-    public string $code = '';
+    public string $thing_id = '';
 
     /** @var string  */
-    public string $name = '';
+    public string $course = '';
 
     /**
      * @return string
      */
     public function tableName(): string
     {
-        return 'roles';
+        return 'change_courses';
     }
 
     /**
@@ -38,8 +38,15 @@ class Role extends DbModel
     public function rules(): array
     {
         return [
-            'code' => [Rules::REQUIRED, [Rules::MIN_LENGTH, Rules::MIN_LENGTH => 3]],
-            'name' => [Rules::REQUIRED, [Rules::MIN_LENGTH, Rules::MIN_LENGTH => 3]],
+            'thing_id' => [
+                Rules::REQUIRED,
+                [Rules::MIN_VALUE, Rules::MIN_VALUE => 1],
+                [
+                    Rules::UNIQUE,
+                    'class' => self::class,
+                ],
+            ],
+            'course' => [Rules::REQUIRED, [Rules::MIN_VALUE, Rules::MIN_VALUE => 0.01]],
         ];
     }
 
@@ -49,8 +56,8 @@ class Role extends DbModel
     public function labels(): array
     {
         return [
-            'code' => 'Код роли',
-            'name' => 'Название роли',
+            'thing_id' => 'Приз',
+            'course' => 'Курс обмена',
         ];
     }
 
