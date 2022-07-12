@@ -81,8 +81,9 @@ $app->router->get('/admin/limits/edit', [LimitController::class, 'edit']);
 $app->router->post('/admin/limits/edit', [LimitController::class, 'edit']);
 $app->router->get('/admin/limits/delete', [LimitController::class, 'delete']);
 
+/** User part */
 $app->router->get('/', [SiteController::class, 'home']);
-
-$app->router->get('/game', [AuthController::class, 'game']);
+//$app->router->post('/game', [SiteController::class, 'game']);
+$app->router->get('/game', [SiteController::class, 'game']);
 
 $app->run();

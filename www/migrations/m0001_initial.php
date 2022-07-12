@@ -4,8 +4,9 @@ namespace app\migrations;
 
 use app\core\exception\RuntimeException;
 use app\core\Migration;
-
 use PDO;
+use app\constants\Game;
+
 use function password_hash;
 use function sprintf;
 
@@ -159,10 +160,14 @@ class m0001_initial extends Migration
             (\'huylo\', \'"Спецоперация"\');';
         $this->db->pdo->exec($query);
 
-        $query = ' INSERT INTO prises_type (code, name, is_limited)
-            VALUES (\'money\', \'Денежный приз\', 1),
-            (\'valuable_thing\', \'Ценная вещь\', 1),
-            (\'bonus_point\', \'Бонусные баллы\', 0);';
+        $query = sprintf(' INSERT INTO prises_type (code, name, is_limited)
+            VALUES (\'%s\', \'Денежный приз\', 1),
+            (\'%s\', \'Ценная вещь\', 1),
+            (\'%s\', \'Бонусные баллы\', 0);',
+            Game::VALUABLE_THING_PRISE,
+            Game::MONEY_PRISE,
+            Game::BONUS_POINT_PRISE
+        );
         $this->db->pdo->exec($query);
 
         $query = ' INSERT INTO units (code, name)
@@ -190,33 +195,33 @@ class m0001_initial extends Migration
             (\'cereal\', \'Зерно\', %s, %s),
             (\'washing_machine\', \'Стиральная машина\', %s, %s),
             (\'toilet\', \'Унитаз\', %s, %s);',
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('box', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('money', 'prises_type'),
+            $this->getRowIdByCode(Game::MONEY_PRISE, 'prises_type'),
             $this->getRowIdByCode('usd', 'units'),
-            $this->getRowIdByCode('money', 'prises_type'),
+            $this->getRowIdByCode(Game::MONEY_PRISE, 'prises_type'),
             $this->getRowIdByCode('eur', 'units'),
-            $this->getRowIdByCode('money', 'prises_type'),
+            $this->getRowIdByCode(Game::MONEY_PRISE, 'prises_type'),
             $this->getRowIdByCode('jpy', 'units'),
-            $this->getRowIdByCode('money', 'prises_type'),
+            $this->getRowIdByCode(Game::MONEY_PRISE, 'prises_type'),
             $this->getRowIdByCode('rub', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('kilogram', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units'),
-            $this->getRowIdByCode('valuable_thing', 'prises_type'),
+            $this->getRowIdByCode(Game::VALUABLE_THING_PRISE, 'prises_type'),
             $this->getRowIdByCode('piece', 'units')
         );
         $this->db->pdo->exec($query);

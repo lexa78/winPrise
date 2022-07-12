@@ -37,6 +37,29 @@
     Your browser does not support the audio tag.
 </audio>
 <div>
-    <button class="btn-success">За</button>
-    <button class="btn-danger">Против</button>
+    <button class="btn btn-success for">За</button>
+    <button class="btn btn-danger opposite" data-toggle="modal" data-target="#oppositeModal">Против</button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="oppositeModal" tabindex="-1" role="dialog" aria-labelledby="oppositeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ты не настоящий ватный поцриот!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Настоящий ватный поцриот должен делать то, что ему скажут. Например, он должен убивать мирных
+                жителей и насиловать детей по приказу хуйла, получая за это медальку или, если повезет, унитаз.
+                По-хорошему, тебя надо забанить за это, но у меня нет на это времени. По-этому, ты просто не
+                получишь никакой приз.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
 </div>

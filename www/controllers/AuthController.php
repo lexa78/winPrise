@@ -23,7 +23,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->registerMiddleware(new AuthMiddleware(['game']));
+        $this->registerMiddleware(new AuthMiddleware(['logout']));
     }
 
     /**
@@ -90,15 +90,5 @@ class AuthController extends Controller
     {
         Application::$app->logout();
         $response->redirect('/');
-    }
-
-    /**
-     * @return string
-     */
-    public function game(): string
-    {
-        return $this->render('game', [
-            'model' => new User(),
-        ]);
     }
 }

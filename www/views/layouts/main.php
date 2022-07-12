@@ -22,13 +22,20 @@ use app\models\User;
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/cabinet">Cabinet</a>
-            </li>
-        </ul>
-        <?php
-        if (User::isGuest()): ?>
+        <?php if (User::isAdmin()): ?>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/admin">Admin</a>
+                </li>
+            </ul>
+        <?php elseif (!User::isGuest()): ?>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/cabinet">Cabinet</a>
+                </li>
+            </ul>
+        <?php endif; ?>
+        <?php if (User::isGuest()): ?>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
                     <a class="nav-link" href="/login">Login</a>
@@ -39,11 +46,6 @@ use app\models\User;
             </ul>
         <?php else: ?>
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/game">
-                        Game
-                    </a>
-                </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="/logout">
                         Welcome <?php echo Application::$app->user->getDisplayName() ?> (Logout)
@@ -72,5 +74,10 @@ use app\models\User;
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+<script>
+    $('.opposite').click(function () {
+
+    });
+</script>
 </body>
 </html>

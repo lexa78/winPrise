@@ -5,7 +5,9 @@ namespace app\controllers;
 
 use app\core\Application;
 use app\core\Controller;
+use app\core\middlewares\AuthMiddleware;
 use app\models\User;
+use app\Services\Game\Game;
 
 /**
  * Class SiteController
@@ -14,11 +16,19 @@ use app\models\User;
 class SiteController extends Controller
 {
     /**
+     * AuthController constructor.
+     */
+    public function __construct()
+    {
+        $this->registerMiddleware(new AuthMiddleware(['game']));
+    }
+
+    /**
      * @return string
      */
     public function home(): string
     {
-        $name = null;
+        $name = 'guest';
         if (Application::$app->user instanceof User) {
             $name = Application::$app->user->firstName;
         }
@@ -27,5 +37,11 @@ class SiteController extends Controller
         ];
 
         return $this->render('home', $params);
+    }
+
+    public function game()
+    {
+        $game = new Game();
+        $game->letsPlay();
     }
 }
