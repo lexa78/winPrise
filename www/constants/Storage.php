@@ -24,7 +24,14 @@ class Storage
     /** Выбираемые поля таблицы */
     /** @var string поле code */
     public const TABLE_FIELD_CODE = 'code';
+    /** @var string поле name */
     public const TABLE_FIELD_NAME = 'name';
+    /** @var string поле min_value */
+    public const TABLE_FIELD_MIN_VALUE = 'min_value';
+    /** @var string поле max_value */
+    public const TABLE_FIELD_MAX_VALUE = 'max_value';
+    /** @var string поле sumItems */
+    public const TABLE_FIELD_SUM_ITEMS = 'sumItems';
 
     /**
      * @return string[]

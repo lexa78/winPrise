@@ -161,8 +161,8 @@ class m0001_initial extends Migration
         $this->db->pdo->exec($query);
 
         $query = sprintf(' INSERT INTO prises_type (code, name, is_limited)
-            VALUES (\'%s\', \'Денежный приз\', 1),
-            (\'%s\', \'Ценная вещь\', 1),
+            VALUES (\'%s\', \'Ценная вещь\', 1),
+            (\'%s\', \'Денежный приз\', 1),
             (\'%s\', \'Бонусные баллы\', 0);',
             Game::VALUABLE_THING_PRISE,
             Game::MONEY_PRISE,

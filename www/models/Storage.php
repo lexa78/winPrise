@@ -94,6 +94,7 @@ class Storage extends DbModel
         $selectString = sprintf(
             'SUM(s.item_count) AS sumItems, %s', StorageConstant::getGroupByOptions()[$groupBy]
         );
+        $groupByString = sprintf('GROUP BY %s', StorageConstant::getGroupByOptions()[$groupBy]);
         if (count($extraColumn) > 0) {
             $extraColumnNames = implode(
                 ', ',
@@ -103,6 +104,10 @@ class Storage extends DbModel
         if (!empty($extraColumnNames)) {
             $selectString = sprintf(
                 $selectString . str_repeat(', %s', count($extraColumn)),
+                $extraColumnNames
+            );
+            $groupByString = sprintf(
+                $groupByString . str_repeat(', %s', count($extraColumn)),
                 $extraColumnNames
             );
         }
@@ -123,11 +128,11 @@ class Storage extends DbModel
                 JOIN things t ON s.thing_id = t.id
                 JOIN prises_type pt ON t.prise_id = pt.id
                 %s
-                GROUP BY %s;',
+                %s;',
             $selectString,
             $tableName,
             $whereQueryPart,
-            StorageConstant::getGroupByOptions()[$groupBy]
+            $groupByString
         );
 
         $statement = self::prepare($query);

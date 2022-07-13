@@ -31,7 +31,7 @@ class Game
     protected function getRandomPriseType(): string
     {
         $leftOfPrisesTypes = (new StorageModel())->findAllLeftGroupBy(StorageConstant::GROUP_BY_PRISES_TYPES);
-        $allPrisesTypes = GameHelper::getPositiveKeys($leftOfPrisesTypes);
+        $allPrisesTypes = GameHelper::getPositiveKeys($leftOfPrisesTypes, [GameConstant::BONUS_POINT_PRISE]);
 
         return $allPrisesTypes[rand(0, count($allPrisesTypes) - 1)];
     }

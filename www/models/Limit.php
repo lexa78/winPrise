@@ -5,6 +5,7 @@ namespace app\models;
 
 use app\constants\Rules;
 use app\core\db\DbModel;
+use PDO;
 
 /**
  * Class Limit
@@ -73,5 +74,32 @@ class Limit extends DbModel
     public function primaryKey(): string
     {
         return 'id';
+    }
+
+    /**
+     * @param array $condition
+     * @return array
+     */
+    public function findMaxLimitsFor(array $condition = []): array
+    {
+        $tableName = $this->tableName();
+        $inQuery = implode(',', array_fill(0, count(current($condition)), '?'));
+        $query = sprintf('
+            SELECT t.code, l.max_value, l.min_value
+            FROM %s l
+            JOIN things t ON t.id = l.thing_id 
+            WHERE t.%s IN (%s)',
+            $tableName,
+            key($condition),
+            $inQuery
+        );
+        $statement = self::prepare($query);
+
+        foreach (current($condition) as $key => $value) {
+            $statement->bindValue(($key + 1), $value);
+        }
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 }
